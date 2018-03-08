@@ -33,11 +33,41 @@ class Blockchain {
     newBlock.hash = newBlock.calculateHash();
     this.chain.push(newBlock);
   }
+
+  isChainValid() {
+    for(let i = 1; i < this.chain.length; i++) {
+      const currentBlock = this.chain[i];
+      const previousBlock = this.chain[i - 1];
+
+      if(currentBlock.hash !== currentBlock.calculateHash()) {
+        return false;
+      }
+
+      if(currentBlock.previousHash !== previousBlock.hash) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
 
 let randomCoin = new Blockchain();
 randomCoin.addBlock(new Block(1, "17/02/2018", { amount: 4}));
 randomCoin.addBlock(new Block(2, "26/02/2018", { amount: 10}));
 
+console.log('Is blockchain valid? ' + randomCoin.isChainValid())
 
-console.log(JSON.stringify(randomCoin, null, 4))
+randomCoin.chain[1].data = { amount: 40 };
+randomCoin.chain[1].hash = randomCoin.chain[1].calculateHash();
+
+console.log('Is blockchain valid? ' + randomCoin.isChainValid())
+
+// console.log(JSON.stringify(randomCoin, null, 4))
+
+
+// LIMITATIONS
+// need mechanism that rolls back changes if new block breaks chain
+// or if one has been tampered with
+// proof of work
+// peer-peer network to communicate with other miners
+// doesn't check if you had enough funds to complete transaction
